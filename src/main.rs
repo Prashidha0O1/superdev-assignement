@@ -15,7 +15,7 @@ use tracing::{info, error};
 
 mod handlers;
 mod types;
-mod util;
+mod utils;
 
 use handlers::*;
 use types::*;
