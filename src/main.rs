@@ -22,7 +22,7 @@ use types::*;
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::init();
+    tracing_subscriber::fmt::init();
 
     let app = Router::new()
         .route("/keypair", post(generate_keypair))
@@ -36,9 +36,10 @@ async fn main() {
 
     let port = env::var("PORT").unwrap_or_else(|_| "3000".to_string());
     let addr = format!("0.0.0.0:{}", port);
-    
+    let socket_addr = addr.parse().unwrap();
     info!("Server starting on {}", addr);
-    
-    let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    axum::Server::bind(&socket_addr)
+        .serve(app.into_make_service())
+        .await
+        .unwrap();
 }
